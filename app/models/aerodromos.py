@@ -3,7 +3,7 @@ from sqlalchemy import Column
 from sqlalchemy.types import TypeDecorator, String
 
 
-class Aerodromo(TypeDecorator):
+class AerodromoType(TypeDecorator):
   impl = String
 
   def __init__(self,lenght=None, minLenght=1, *args, **kwargs):
@@ -32,5 +32,5 @@ class Aerodromo(TypeDecorator):
 class Aerodromos(Base):
   __tablename__ = "aerodromos"
 
-  aerodromo = Column(Aerodromo(4, minLenght=3),primary_key=True, nullable=False)
+  aerodromo = Column(AerodromoType(4, minLenght=3),primary_key=True, nullable=False)
 
