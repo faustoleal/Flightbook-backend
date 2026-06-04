@@ -1,5 +1,5 @@
 import re
-from sqlalchemy.types import TypeDecorator, String, Integer 
+from sqlalchemy.types import TypeDecorator, String, Date, Time, CHAR, INTEGER
 
 class NotNullableType(TypeDecorator):
   impl = String
@@ -11,6 +11,8 @@ class NotNullableType(TypeDecorator):
     return value.upper()
   
   def process_result_value(self, value, dialect):
+      if value is None:
+            raise ValueError("Se encontró un valor nulo en la BD, lo cual no está permitido")
       return value
   
 class NameType(TypeDecorator):
@@ -34,10 +36,12 @@ class NameType(TypeDecorator):
     return value
   
   def process_result_value(self, value, dialect):
-    return super().process_result_value(value, dialect)
+    if value is None:
+            raise ValueError("El nombre del usuario no puede ser nulo en la BD")
+    return value
   
 class MatriculaType(TypeDecorator):
-  impl = String
+  impl = CHAR
 
   def __init__(self, *args, **kwargs):
     super().__init__(lenght=6,*args, **kwargs)
@@ -55,6 +59,8 @@ class MatriculaType(TypeDecorator):
     return value
   
   def process_result_value(self, value, dialect):
+      if value is None:
+            raise ValueError("La matricula del avión no puede ser nula en la BD")
       return value
 
 class ClaseType(TypeDecorator):
@@ -79,6 +85,8 @@ class ClaseType(TypeDecorator):
         return value
 
     def process_result_value(self, value, dialect):
+        if value is None:
+            raise ValueError("La clase del avión no puede ser nula en la BD")
         return value
     
 class AerodromoType(TypeDecorator):
@@ -105,4 +113,94 @@ class AerodromoType(TypeDecorator):
   
 
   def process_result_value(self, value, dialect):
+    if value is None:
+            raise ValueError("El aerodromo no puede ser nulo en la BD")
     return value
+  
+class NotNullDate(TypeDecorator):
+    impl = Date
+
+    def process_bind_param(self, value, dialect):
+        if value is None:
+            raise ValueError("Te olvidaste de poner el día del vuelo")
+        return value
+
+    def process_result_value(self, value, dialect):
+        if value is None:
+            raise ValueError("El día de vuelo no puede ser nulo en la BD")
+        return value
+    
+class NotNullTime(TypeDecorator):
+    impl = Time
+
+    def process_bind_param(self, value, dialect):
+        if value is None:
+            raise ValueError("La hora de salida o llegada es obligatoria")
+        return value
+
+    def process_result_value(self, value, dialect):
+        if value is None:
+            raise ValueError("El horario de salida o llegada no puede ser nulo en la BD")
+        return value
+    
+class AerodromoSalidaLlegadaTYpe(TypeDecorator):
+    impl= String
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(length=4, *args, **kwargs)
+        self.min_length = 3
+        self.max_length = 4
+        # Regex: solo letras con acentos y ñ, sin espacios ni números
+        self.pattern = re.compile(r'^[A-Za-zÁÉÍÓÚáéíóúÑñ]+$')
+    
+    def process_bind_param(self, value, dialect):
+        if value is None:
+            raise ValueError("El aeródromo de salida o llegada es obligatorio")
+
+        if not self.pattern.match(value):
+            raise ValueError("El aeródromo no puede contener espacios o números")
+
+        if not (self.min_length <= len(value) <= self.max_length):
+            raise ValueError("El aeródromo debe tener entre 3 y 4 letras")
+
+        return value.upper()
+
+    def process_result_value(self, value, dialect):
+        if value is None:
+            raise ValueError("El aeródromo no puede ser nulo en la BD")
+        return value
+    
+class FinalidadType(TypeDecorator):
+    impl = String
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(length=10, *args, **kwargs)
+        self.allowed = {"ENT", "INST", "READP", "EXA"}
+
+    def process_bind_param(self, value, dialect):
+        if value is None:
+            raise ValueError("El campo finalidad es obligatorio")
+
+        if value not in self.allowed:
+            raise ValueError(f"Finalidad inválida: {value}. Debe ser uno de {self.allowed}")
+
+        return value
+
+    def process_result_value(self, value, dialect):
+        if value is None:
+            raise ValueError("El campo finalidad no puede ser nulo en la BD")
+        return value
+
+
+class NotNullAterrizaje(TypeDecorator):
+    impl = INTEGER
+
+    def process_bind_param(self, value, dialect):
+        if value is None:
+            raise ValueError("Tiene que poner los aterrizajes realizados")
+        return value
+
+    def process_result_value(self, value, dialect):
+        if value is None:
+            raise ValueError("El número de aterrizajes no puede ser nulo en la BD")
+        return value
