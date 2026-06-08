@@ -1,6 +1,6 @@
 from utils.db import Base
 from sqlalchemy import Column
-from custom_types import MatriculaType, NotNullableType, ClaseType
+from .custom_types import MatriculaType, NotNullableType, ClaseType
 
 class Aviones(Base):
   __tablename__ = "aviones"

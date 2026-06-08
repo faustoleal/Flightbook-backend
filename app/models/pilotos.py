@@ -1,6 +1,6 @@
 from utils.db import Base
 from sqlalchemy import Column, Integer
-from custom_types import NameType, NotNullableType
+from .custom_types import NameType, NotNullableType
 
 
 class Pilotos(Base):

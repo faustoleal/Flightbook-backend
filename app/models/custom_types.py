@@ -44,8 +44,8 @@ class MatriculaType(TypeDecorator):
   impl = CHAR
 
   def __init__(self, *args, **kwargs):
-    super().__init__(lenght=6,*args, **kwargs)
-    self.lenght = 6
+    super().__init__(length=6,*args, **kwargs)
+    self.length = 6
 
   def process_bind_param(self, value, dialect):
     if value is None:
@@ -53,7 +53,7 @@ class MatriculaType(TypeDecorator):
     
     value = value.upper()
 
-    if len(value) != self.lenght:
+    if len(value) != self.length:
       raise ValueError("La matricula tiene que tener 6 caracteres")
     
     return value
@@ -92,10 +92,10 @@ class ClaseType(TypeDecorator):
 class AerodromoType(TypeDecorator):
   impl = String
 
-  def __init__(self,lenght=None, minLenght=1, *args, **kwargs):
-    super().__init__(lenght=lenght, *args, **kwargs)
-    self.minLenght = minLenght
-    self.maxLenght = lenght
+  def __init__(self,length=None, minLength=1, *args, **kwargs):
+    super().__init__(length=length, *args, **kwargs)
+    self.minLength = minLength
+    self.maxLength = length
   
   def process_bind_param(self, value, dialect):
     if value is None:
@@ -106,7 +106,7 @@ class AerodromoType(TypeDecorator):
     if not value.isalpha():
       raise ValueError(f"El aerodromo {value} solo puede contener letras")
 
-    if len(value) < self.minLenght or len(value) > self.maxLenght:
+    if len(value) < self.minLength or len(value) > self.maxLength:
       raise ValueError(f"El aerodromo no puede tener mas de 4 letras o menos de 3")
     
     return value

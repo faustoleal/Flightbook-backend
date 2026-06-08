@@ -1,6 +1,6 @@
 from utils.db import Base
 from sqlalchemy import Column, Integer, ForeignKey, DECIMAL
-from custom_types import NotNullDate, NotNullTime, AerodromoSalidaLlegadaTYpe,FinalidadType, MatriculaType, NotNullAterrizaje
+from .custom_types import NotNullDate, NotNullTime, AerodromoSalidaLlegadaTYpe,FinalidadType, MatriculaType, NotNullAterrizaje
 
 class HorasDeVuelo(Base):
   __tablename__ = "horas_de_vuelos"
