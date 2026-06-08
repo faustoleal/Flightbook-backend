@@ -16,7 +16,7 @@ class NotNullableType(TypeDecorator):
       return value
   
 class NameType(TypeDecorator):
-  impl: String
+  impl= String
 
   def __init__(self, *args, **kwargs):
       super().__init__(length=50,*args, **kwargs)
@@ -190,7 +190,6 @@ class FinalidadType(TypeDecorator):
         if value is None:
             raise ValueError("El campo finalidad no puede ser nulo en la BD")
         return value
-
 
 class NotNullAterrizaje(TypeDecorator):
     impl = INTEGER
