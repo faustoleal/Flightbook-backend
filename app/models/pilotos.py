@@ -9,4 +9,4 @@ class Pilotos(Base):
   id = Column(Integer, primary_key=True, autoincrement=True)
   name = Column(NameType(), nullable=False)
   usuario = Column(NotNullableType(), nullable=False, unique=True)
-  passwordHash = Column(NotNullableType(), nullable=False)
+  password_hash = Column(NotNullableType(), nullable=False)
