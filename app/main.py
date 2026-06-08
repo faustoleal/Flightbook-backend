@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from utils.db import Base, engine
-from routers import aerodromos, horas_de_vuelos, aviones
+from routers import aerodromos, horas_de_vuelos, aviones, pilotos
 
 Base.metadata.create_all(engine)
 
@@ -13,3 +13,4 @@ async def root():
 app.include_router(aerodromos.router)
 app.include_router(horas_de_vuelos.router)
 app.include_router(aviones.router)
+app.include_router(pilotos.router)
