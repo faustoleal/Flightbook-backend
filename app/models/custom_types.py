@@ -1,6 +1,26 @@
 import re
 from sqlalchemy.types import TypeDecorator, String, Date, Time, CHAR, INTEGER
 
+"""
+def __init__(self, *args, **kwargs):
+Método constructor de la clase. Se ejecuta automáticamente al crear una nueva instancia y permite inicializar atributos o configurar valores necesarios para el funcionamiento del objeto.
+    
+*args y **kwargs se utilizan para recibir parámetros adicionales de forma flexible, evitando tener que definir todos los argumentos explícitamente.
+"""
+
+""" 
+def process_bind_param(self,value,dialect)
+Este método se ejecuta antes de guardar el valor en la base de datos.
+Sirve para validar y transformar el dato que se va a insertar. 
+"""
+
+"""
+def process_result_value(self,value,dialect)
+Este método se ejecuta al leer el valor desde la base de datos.
+Permite validar o transformar el dato recuperado.
+"""
+       
+
 class NotNullableType(TypeDecorator):
   impl = String
 
@@ -19,8 +39,11 @@ class NameType(TypeDecorator):
   impl= String
 
   def __init__(self, *args, **kwargs):
+      # length: para definir el tamaño máximo de la columna
       super().__init__(length=50,*args, **kwargs)
+      # self.max_length: guarda el limite para validaciones
       self.max_length = 50
+      # self.pattern: regex que permite solo letras (con acentos, ñ) y espacios.
       self.pattern = re.compile(r'^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$')
 
   def process_bind_param(self, value, dialect):
@@ -36,6 +59,7 @@ class NameType(TypeDecorator):
     return value
   
   def process_result_value(self, value, dialect):
+    # No permitimos valores al leer la Base de Datos
     if value is None:
             raise ValueError("El nombre del usuario no puede ser nulo en la BD")
     return value
@@ -45,6 +69,7 @@ class MatriculaType(TypeDecorator):
 
   def __init__(self, *args, **kwargs):
     super().__init__(length=6,*args, **kwargs)
+    # self_length: guarda ese límite como atributo interno para validaciones.
     self.length = 6
 
   def process_bind_param(self, value, dialect):
@@ -59,6 +84,7 @@ class MatriculaType(TypeDecorator):
     return value
   
   def process_result_value(self, value, dialect):
+      # No permitimos valores al leer la Base de Datos
       if value is None:
             raise ValueError("La matricula del avión no puede ser nula en la BD")
       return value
@@ -72,11 +98,9 @@ class ClaseType(TypeDecorator):
         self.pattern = re.compile(r'^[A-Za-zÁÉÍÓÚÑáéíóúñ.,;:\'\"!?()¡¿-]+$')
 
     def process_bind_param(self, value, dialect):
-        # No permitir nulos
         if value is None:
             raise ValueError("El campo clase no puede estar vacio")
 
-        # Validar contra la expresión regular
         if not self.pattern.match(value):
             raise ValueError(
                 "El campo clase no puede contener numeros ni espacios"
@@ -85,6 +109,7 @@ class ClaseType(TypeDecorator):
         return value
 
     def process_result_value(self, value, dialect):
+        # No permitimos valores al leer la Base de Datos
         if value is None:
             raise ValueError("La clase del avión no puede ser nula en la BD")
         return value
@@ -94,7 +119,9 @@ class AerodromoType(TypeDecorator):
 
   def __init__(self,length=None, minLength=1, *args, **kwargs):
     super().__init__(length=length, *args, **kwargs)
+    # self.minLength: almacena la longitud mínima para validaciones.
     self.minLength = minLength
+    # self.maxLength: almacena la longitud máxima para validaciones.
     self.maxLength = length
   
   def process_bind_param(self, value, dialect):
@@ -113,6 +140,7 @@ class AerodromoType(TypeDecorator):
   
 
   def process_result_value(self, value, dialect):
+    # No permitimos valores al leer la Base de Datos
     if value is None:
             raise ValueError("El aerodromo no puede ser nulo en la BD")
     return value
@@ -126,6 +154,7 @@ class NotNullDate(TypeDecorator):
         return value
 
     def process_result_value(self, value, dialect):
+        # No permitimos valores al leer la Base de Datos
         if value is None:
             raise ValueError("El día de vuelo no puede ser nulo en la BD")
         return value
@@ -139,6 +168,7 @@ class NotNullTime(TypeDecorator):
         return value
 
     def process_result_value(self, value, dialect):
+        # No permitimos valores al leer la Base de Datos
         if value is None:
             raise ValueError("El horario de salida o llegada no puede ser nulo en la BD")
         return value
@@ -148,7 +178,9 @@ class AerodromoSalidaLlegadaTYpe(TypeDecorator):
 
     def __init__(self, *args, **kwargs):
         super().__init__(length=4, *args, **kwargs)
+        # self.minLength: almacena la longitud mínima para validaciones.
         self.min_length = 3
+        # self.maxLength: almacena la longitud máxima para validaciones.
         self.max_length = 4
         # Regex: solo letras con acentos y ñ, sin espacios ni números
         self.pattern = re.compile(r'^[A-Za-zÁÉÍÓÚáéíóúÑñ]+$')
@@ -166,6 +198,7 @@ class AerodromoSalidaLlegadaTYpe(TypeDecorator):
         return value.upper()
 
     def process_result_value(self, value, dialect):
+        # No permitimos valores al leer la Base de Datos
         if value is None:
             raise ValueError("El aeródromo no puede ser nulo en la BD")
         return value
@@ -187,6 +220,7 @@ class FinalidadType(TypeDecorator):
         return value
 
     def process_result_value(self, value, dialect):
+        # No permitimos valores al leer la Base de Datos
         if value is None:
             raise ValueError("El campo finalidad no puede ser nulo en la BD")
         return value
@@ -200,6 +234,7 @@ class NotNullAterrizaje(TypeDecorator):
         return value
 
     def process_result_value(self, value, dialect):
+        # No permitimos valores al leer la Base de Datos
         if value is None:
             raise ValueError("El número de aterrizajes no puede ser nulo en la BD")
         return value
