@@ -1,9 +1,9 @@
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, field_validator
 
 class AerodromoSchema(BaseModel):
   aerodromo: str
 
-  @validator("aerodromo")
+  @field_validator("aerodromo")
 
   def validar_aerodromo(cls,value):
     if value is None:
