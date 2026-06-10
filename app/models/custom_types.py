@@ -208,6 +208,7 @@ class FinalidadType(TypeDecorator):
 
     def __init__(self, *args, **kwargs):
         super().__init__(length=10, *args, **kwargs)
+        #self.allowed: define un conjunto de valores válidos que se usarán en validaciones posteriores.
         self.allowed = {"ENT", "INST", "READP", "EXA"}
 
     def process_bind_param(self, value, dialect):
