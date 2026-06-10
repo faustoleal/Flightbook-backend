@@ -24,7 +24,7 @@ def createAerodromo(aerodromo:AerodromoSchema, db:Session = Depends(get_db)):
         raise HTTPException(status_code=400, message="El aeródromo ya existe")
 
     # 2. Crear nuevo registro
-    nuevo = Aerodromos(**aerodromo.dict())
+    nuevo = Aerodromos(**aerodromo.model_dump())
     db.add(nuevo)
     db.commit()
     db.refresh(nuevo)
