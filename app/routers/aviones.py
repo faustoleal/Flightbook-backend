@@ -19,7 +19,7 @@ def createAvion(avion:AvionSchema, db:Session = Depends(get_db)):
     stmt = select(Aviones).where(Aviones.matricula == avion.matricula)
     existe = db.execute(stmt).scalars().first()
     if existe:
-        raise HTTPException(status_code=400, message="El avión ya esta registrado")
+        raise HTTPException(status_code=400, detail="El avión ya esta registrado")
 
     # 2. Crear nuevo registro
     nuevo = Aviones(**avion.model_dump())
