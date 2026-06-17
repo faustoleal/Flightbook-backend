@@ -21,7 +21,7 @@ def createAerodromo(aerodromo:AerodromoSchema, db:Session = Depends(get_db)):
     stmt = select(Aerodromos).where(Aerodromos.aerodromo == aerodromo.aerodromo)
     existe = db.execute(stmt).scalars().first()
     if existe:
-        raise HTTPException(status_code=400, message="El aeródromo ya existe")
+        raise HTTPException(status_code=400, detail="El aeródromo ya existe")
 
     # 2. Crear nuevo registro
     nuevo = Aerodromos(**aerodromo.model_dump())
