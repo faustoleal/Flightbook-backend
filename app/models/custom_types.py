@@ -28,7 +28,7 @@ class NotNullableType(TypeDecorator):
     if value is None:
       raise ValueError("El campo modelo no puede estar vacío")
     
-    return value.upper()
+    return value
   
   def process_result_value(self, value, dialect):
       if value is None:
