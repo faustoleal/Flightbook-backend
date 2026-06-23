@@ -4,7 +4,7 @@ from decimal import Decimal
 from enum import Enum
 from typing import Annotated
 import re
-
+from schemas import AvionSchema, ResponsePilotoSchema
 
 class FinalidadEnum(str, Enum):
     ENT = "ENT"
@@ -55,11 +55,17 @@ class HorasDeVueloSchema(BaseModel):
         raise ValueError("El aerodromo no puede tener menos de 3 caracteres o mayor a 4")
      return value
   
+
+
+class HorasDeVueloResponse(HorasDeVueloSchema):
+  id: int
+  avion_matricula: str
+
   @field_validator("avion_matricula")
   def validar_avion_matricula(cls,value):
      if value is None:
         raise ValueError("La matrícula del avión es obligatoria.")
-     if not len(value) is 6:
+     if len(value) != 6:
         raise ValueError("El largo de la matrícula tiene que ser de 6 caractéres.")
      pattern = re.compile(r"^LV-[A-Z]{3}$")
      if not pattern.match(value):
@@ -67,9 +73,18 @@ class HorasDeVueloSchema(BaseModel):
      return value
 
 
-class HorasDeVueloResponse(HorasDeVueloSchema):
-   id: int
+class HorasDeVueloPorPilotoResponse(HorasDeVueloSchema):
+   id:int
+   avion: AvionSchema
+   piloto: ResponsePilotoSchema
 
+   class Config:
+      orm_mode:True
+
+
+class PaginationHorasResponse(HorasDeVueloPorPilotoResponse):
+   content: list[HorasDeVueloPorPilotoResponse]
+   totalPages: int
 
    class Config:
       orm_mode:True
