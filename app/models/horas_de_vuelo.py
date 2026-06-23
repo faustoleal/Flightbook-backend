@@ -1,5 +1,6 @@
 from utils.db import Base
 from sqlalchemy import Column, Integer, ForeignKey, DECIMAL
+from sqlalchemy.orm import relationship
 from .custom_types import NotNullDate, NotNullTime, AerodromoSalidaLlegadaTYpe,FinalidadType, MatriculaType, NotNullAterrizaje
 
 class HorasDeVuelo(Base):
@@ -30,3 +31,7 @@ class HorasDeVuelo(Base):
   instrumentos_real_p= Column(DECIMAL, default=0)
   instrumentos_real_c= Column(DECIMAL, default=0)
   capota= Column(DECIMAL, default=0)
+  piloto_id = Column(Integer,ForeignKey("pilotos.id"),nullable=False ,default=1)
+
+  avion = relationship("Aviones", backref="horas_de_vuelo")
+  piloto = relationship("Pilotos", backref="horas_de_vuelo")
