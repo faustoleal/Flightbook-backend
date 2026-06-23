@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from utils.db import get_db
-from models.aerodromos import Aerodromos
-from schemas.aerodromos import AerodromoSchema
+from models import Aerodromos
+from schemas import AerodromoSchema
 
 router = APIRouter(
   prefix="/aerodromos"

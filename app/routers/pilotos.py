@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from utils.db import get_db
-from models.pilotos import Pilotos
-from schemas.pilotos import ResponsePilotoSchema, NewPilotoSchema
+from models import Pilotos
+from schemas import ResponsePilotoSchema, NewPilotoSchema
 
 router = APIRouter(prefix="/pilotos")
 
