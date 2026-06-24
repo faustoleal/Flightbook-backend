@@ -20,7 +20,6 @@ class HorasDeVueloSchema(BaseModel):
   hasta:str
   hora_llegada: time
   finalidad: FinalidadEnum
-  avion_matricula: str
   local_dia_p: Annotated[Decimal, Field(max_digits=2, decimal_places=1, ge=0, default=0)]
   local_dia_c: Annotated[Decimal, Field(max_digits=2, decimal_places=1, ge=0, default=0)]
   local_noche_p: Annotated[Decimal, Field(max_digits=2, decimal_places=1, ge=0, default=0)]
@@ -60,6 +59,7 @@ class HorasDeVueloSchema(BaseModel):
 class HorasDeVueloResponse(HorasDeVueloSchema):
   id: int
   avion_matricula: str
+  piloto_id:int
 
   @field_validator("avion_matricula")
   def validar_avion_matricula(cls,value):
@@ -82,7 +82,7 @@ class HorasDeVueloPorPilotoResponse(HorasDeVueloSchema):
       orm_mode:True
 
 
-class PaginationHorasResponse(HorasDeVueloPorPilotoResponse):
+class PaginationHorasResponse(BaseModel):
    content: list[HorasDeVueloPorPilotoResponse]
    totalPages: int
 
