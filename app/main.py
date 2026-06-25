@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request
 from utils.db import Base, engine
-from app.utils.middlewares import TokenExtractor
+from utils.middlewares import TokenExtractor
 from routers import aerodromos, horas_de_vuelos, aviones, pilotos
 
 
