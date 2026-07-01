@@ -25,17 +25,19 @@ class PilotoSchema(BaseModel):
 
   
 class NewPilotoSchema(PilotoSchema):
-    password_hash: str
+    password: str
 
-    @field_validator("password_hash")
+    @field_validator("password")
     def validar_passwordHash(cls,value):
       if value is None:
         raise ValueError("Se necesita una contraseña")
       return value
     
     
-class ResponsePilotoSchema(PilotoSchema):
+class ResponsePilotoSchema(BaseModel):
     id:int
+    name: str
+    usuario: str
 
     class Config:
       orm_mode = True
