@@ -3,7 +3,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session, joinedload
 from utils.db import get_db
 from models import HorasDeVuelo
-from schemas import HorasDeVueloResponse, PaginationHorasResponse, HorasDeVuelosTotalesResponse
+from schemas import HorasDeVueloResponse, PaginationHorasResponse, HorasDeVuelosTotalesResponse, NuevaHoraRequest
 
 router = APIRouter(prefix="/horas")
 
@@ -75,3 +75,27 @@ async def getTotales(id:int, db:Session = Depends(get_db)):
       return HTTPException(status_code=404, detail="No hay horas registradas")
     
     return totales
+
+@router.post("/", response_model=HorasDeVueloResponse)
+def createHora(request:NuevaHoraRequest, db:Session = Depends(get_db)):
+    # 1. Verificar que el formulario este completo
+    if not request.nuevaHora:
+       raise HTTPException(status_code=401, detail="No se registro una nueva hora")
+    
+    if not request.pilotoId:
+       raise HTTPException(status_code=401, detail="El id del piloto es necesario")
+
+    # Crear nueva hora de vuelo
+
+    nueva_hora = HorasDeVuelo(
+       piloto_id= request.pilotoId,
+       **request.nuevaHora.model_dump()
+    )
+
+    # 2. Crear nuevo registro
+    db.add(nueva_hora)
+    db.commit()
+    db.refresh(nueva_hora)
+
+    # 3. Devolver el objeto serializado con schema
+    return nueva_hora
