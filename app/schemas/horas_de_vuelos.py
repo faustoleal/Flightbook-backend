@@ -88,3 +88,12 @@ class PaginationHorasResponse(BaseModel):
 
    class Config:
       orm_mode:True
+
+class HorasDeVuelosTotalesResponse(BaseModel):
+   total_dia: float
+   total_noche: float
+   total_local: float
+   total_travesia: float
+   total_alMando: float
+   total_horas: float
+   total_aterrizajes: int
