@@ -54,6 +54,21 @@ class HorasDeVueloSchema(BaseModel):
         raise ValueError("El aerodromo no puede tener menos de 3 caracteres o mayor a 4")
      return value
   
+  
+
+class NuevaHoraResponse(HorasDeVueloSchema):
+   avion_matricula: str
+
+   @field_validator("avion_matricula")
+   def validar_avion_matricula(cls,value):
+     if value is None:
+        raise ValueError("La matrícula del avión es obligatoria.")
+     if len(value) != 6:
+        raise ValueError("El largo de la matrícula tiene que ser de 6 caractéres.")
+     pattern = re.compile(r"^LV-[A-Z]{3}$")
+     if not pattern.match(value):
+        raise ValueError("La matricula debe respetar el siguiente formato LV-AAA")
+     return value
 
 
 class HorasDeVueloResponse(HorasDeVueloSchema):
@@ -71,6 +86,8 @@ class HorasDeVueloResponse(HorasDeVueloSchema):
      if not pattern.match(value):
         raise ValueError("La matricula debe respetar el siguiente formato LV-AAA")
      return value
+
+
 
 
 class HorasDeVueloPorPilotoResponse(HorasDeVueloSchema):
@@ -97,3 +114,11 @@ class HorasDeVuelosTotalesResponse(BaseModel):
    total_alMando: float
    total_horas: float
    total_aterrizajes: int
+
+class NuevaHoraRequest(BaseModel):
+   nuevaHora:NuevaHoraResponse
+   pilotoId: int
+
+   class Config:
+      orm_mode: True
+
