@@ -1,7 +1,7 @@
 from .aerodromos import AerodromoSchema
 from .aviones import AvionSchema
 from .pilotos import PilotoSchema, ResponsePilotoSchema, NewPilotoSchema
-from .horas_de_vuelos import HorasDeVueloSchema, HorasDeVueloResponse, HorasDeVueloPorPilotoResponse, PaginationHorasResponse
+from .horas_de_vuelos import HorasDeVueloSchema, HorasDeVueloResponse, HorasDeVueloPorPilotoResponse, PaginationHorasResponse, HorasDeVuelosTotalesResponse
 from .login import LoginRequest, LoginResponse
 
 __all__ = [
@@ -14,6 +14,7 @@ __all__ = [
   "HorasDeVueloResponse",
   "HorasDeVueloPorPilotoResponse",
   "PaginationHorasResponse",
+  "HorasDeVuelosTotalesResponse",
   "LoginRequest",
   "LoginResponse"
 ]
