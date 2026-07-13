@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from utils.db import Base, engine
 from utils.middlewares import TokenExtractor
 from routers import aerodromos, horas_de_vuelos, aviones, pilotos, login
@@ -7,6 +8,18 @@ from routers import aerodromos, horas_de_vuelos, aviones, pilotos, login
 Base.metadata.create_all(engine)
 
 app = FastAPI()
+
+origins = [
+  "http://localhost:5173"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,            # dominios permitidos
+    allow_credentials=True,           # si usás cookies/autenticación
+    allow_methods=["*"],              # métodos HTTP permitidos
+    allow_headers=["*"],              # headers permitidos
+)
 
 @app.get("/")
 async def root(request: Request):
