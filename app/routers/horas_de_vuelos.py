@@ -5,7 +5,7 @@ from utils.db import get_db
 from models import HorasDeVuelo
 from schemas import HorasDeVueloResponse, PaginationHorasResponse, HorasDeVuelosTotalesResponse, NuevaHoraRequest
 
-router = APIRouter(prefix="/horas")
+router = APIRouter(prefix="/api/horas")
 
 @router.get("/", response_model=list[HorasDeVueloResponse])
 def getHoras(db:Session = Depends(get_db)):

@@ -5,7 +5,7 @@ from utils.db import get_db
 from models import Aviones
 from schemas import AvionSchema
 
-router = APIRouter(prefix="/aviones")
+router = APIRouter(prefix="/api/aviones")
 
 @router.get("/", response_model=list[AvionSchema])
 def getAviones(db:Session = Depends(get_db)):

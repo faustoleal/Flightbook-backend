@@ -8,7 +8,7 @@ from jose import jwt
 from models import Pilotos
 from schemas import LoginResponse, LoginRequest
 
-router = APIRouter(prefix="/login")
+router = APIRouter(prefix="/api/login")
 
 @router.post("/", response_model=LoginResponse)
 async def login(data: LoginRequest, db:Session = Depends(get_db)):

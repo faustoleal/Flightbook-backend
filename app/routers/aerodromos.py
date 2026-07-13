@@ -6,7 +6,7 @@ from models import Aerodromos
 from schemas import AerodromoSchema
 
 router = APIRouter(
-  prefix="/aerodromos"
+  prefix="/api/aerodromos"
 )
 
 @router.get("/", response_model=list[AerodromoSchema])

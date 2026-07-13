@@ -6,7 +6,7 @@ from models import Pilotos
 import bcrypt
 from schemas import ResponsePilotoSchema, NewPilotoSchema
 
-router = APIRouter(prefix="/pilotos")
+router = APIRouter(prefix="/api/pilotos")
 
 
 @router.get("/", response_model=list[ResponsePilotoSchema])
