@@ -36,7 +36,7 @@ def getHorasPorPiloto(id:int, page:int = 1, db:Session = Depends(get_db)):
 
   return {
     "content": result,
-    "totalPages": (total + limit -1) // limit
+    "totalPages": (total + limit - 1) // limit + 1
   }
 
 @router.get("/{id}/totales", response_model=HorasDeVuelosTotalesResponse)
