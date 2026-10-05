@@ -2,6 +2,7 @@ from pydantic import BaseModel, field_validator
 
 class AerodromoSchema(BaseModel):
   aerodromo: str
+  ciudad: str
 
   @field_validator("aerodromo")
 
@@ -18,6 +19,15 @@ class AerodromoSchema(BaseModel):
       raise ValueError("El aeródromo debe tener entre 3 y 4 letras")
     
     return value
+
+  @field_validator("ciudad")
+
+  def validar_ciudad(cls,value):
+    if value is None:
+      raise ValueError("La ciudad no puede ser nula")
+
+    if len(value) < 3:
+      raise ValueError("El nombre de la ciudad no puede ser tan corto")
   
   class Config:
     orm_mode = True
