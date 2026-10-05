@@ -26,7 +26,7 @@ class NotNullableType(TypeDecorator):
 
   def process_bind_param(self, value, dialect):
     if value is None:
-      raise ValueError("El campo modelo no puede estar vacío")
+      raise ValueError("El campo no puede estar vacío")
     
     return value
   
