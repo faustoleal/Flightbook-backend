@@ -6,5 +6,5 @@ class Aerodromos(Base):
   __tablename__ = "aerodromos"
 
   aerodromo = Column(AerodromoType(4, minLength=3),primary_key=True, nullable=False)
-  ciudad = Column(NotNullableType, nullable=False)
+  ciudad = Column(NotNullableType(), nullable=False)
 
