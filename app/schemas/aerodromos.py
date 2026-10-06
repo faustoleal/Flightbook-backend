@@ -24,10 +24,8 @@ class AerodromoSchema(BaseModel):
 
   def validar_ciudad(cls,value):
     if value is None:
-      raise ValueError("La ciudad no puede ser nula")
-
-    if len(value) < 3:
-      raise ValueError("El nombre de la ciudad no puede ser tan corto")
+      raise ValueError("La ciudad no puede ser nula.")
+    return value
   
   class Config:
     orm_mode = True
