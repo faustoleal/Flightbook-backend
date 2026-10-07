@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session, joinedload
-from sqlalchemy import func, select
+from sqlalchemy import func, select, extract, union_all
 from models import  HorasDeVuelo
 from schemas.horas_de_vuelos import NuevaHoraRequest
 
@@ -90,3 +90,52 @@ def crear_hora(db:Session, request:NuevaHoraRequest):
     
         # 3. Devolver el objeto serializado con schema
         return nueva_hora
+
+def horas_de_vuelos_stats(db:Session,id:int):
+  #horas totales
+
+  totales = (HorasDeVuelo.local_dia_p + HorasDeVuelo.local_dia_c + HorasDeVuelo.local_noche_p + HorasDeVuelo.local_noche_c + HorasDeVuelo.travesia_dia_p + HorasDeVuelo.travesia_dia_c + HorasDeVuelo.travesia_noche_p + HorasDeVuelo.local_noche_c)
+
+  # horas por año
+
+  horas_por_año = (db.query(extract("year", HorasDeVuelo.dia).label("año"), func.sum(totales).label("horas"))).where(HorasDeVuelo.piloto_id == id).group_by(extract("year", HorasDeVuelo.dia)).all()
+  # horas por avión
+
+  horas_por_avion = (db.query(HorasDeVuelo.avion_matricula, func.sum(totales).label("horas"))).where(HorasDeVuelo.piloto_id == id).group_by(HorasDeVuelo.avion_matricula).all()
+
+  # destinos preferidos
+  # Subquery para columna 'desde'
+
+  desde_q = (
+        db.query(HorasDeVuelo.desde.label("destino"))
+        .filter(HorasDeVuelo.piloto_id == id)
+    )
+
+  # Subquery para columna 'hasta'
+  hasta_q = (
+        db.query(HorasDeVuelo.hasta.label("destino"))
+        .filter(HorasDeVuelo.piloto_id == id)
+    )
+
+  # Unimos ambas columnas en una sola lista
+  union_q = union_all(desde_q, hasta_q).alias("aerodromos")
+
+  # Contamos ocurrencias de cada aeródromo
+  destinos_preferidos = (
+        db.query(
+            union_q.c.destino,
+            func.count().label("cantidad")
+        )
+        .filter(union_q.c.destino != "ATE")  # si querés excluir ATE
+        .group_by(union_q.c.destino)
+        .order_by(func.count().desc())
+        .all()
+    )
+
+  return {
+        "horas_por_año": [{"año": int(a), "horas": float(h)} for a, h in horas_por_año],
+        "horas_por_avion": [{"avion": av, "horas": float(h)} for av, h in horas_por_avion],
+        "destinos_preferidos": [{"destino": d, "cantidad": c} for d, c in destinos_preferidos]
+    }
+
+ 
