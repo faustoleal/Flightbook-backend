@@ -4,7 +4,7 @@ from decimal import Decimal
 from enum import Enum
 from typing import Annotated
 import re
-from schemas import AvionSchema, ResponsePilotoSchema
+from schemas import AvionSchema, ResponsePilotoSchema, AerodromoSchema
 
 class FinalidadEnum(str, Enum):
     ENT = "ENT"
@@ -114,6 +114,23 @@ class HorasDeVuelosTotalesResponse(BaseModel):
    total_alMando: float
    total_horas: float
    total_aterrizajes: int
+
+class HorasPorAño(BaseModel):
+   año: int
+   horas: float
+
+class HorasPorAvion(BaseModel):
+   avion: str
+   horas:float
+
+class DestinosPreferidos(BaseModel):
+   destino: str
+   cantidad: int
+
+class HorasDeVuelosStats(BaseModel):
+   horas_por_año: list[HorasPorAño]
+   horas_por_avion: list[HorasPorAvion]
+   destinos_preferidos: list[DestinosPreferidos]
 
 class NuevaHoraRequest(BaseModel):
    nuevaHora:NuevaHoraResponse
