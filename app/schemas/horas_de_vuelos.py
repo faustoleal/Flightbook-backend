@@ -120,17 +120,20 @@ class HorasPorAño(BaseModel):
    horas: float
 
 class HorasPorAvion(BaseModel):
-   avion: str
+   avion: AvionSchema
    horas:float
 
 class DestinosPreferidos(BaseModel):
-   destino: str
+   destino: AerodromoSchema
    cantidad: int
 
 class HorasDeVuelosStats(BaseModel):
    horas_por_año: list[HorasPorAño]
    horas_por_avion: list[HorasPorAvion]
    destinos_preferidos: list[DestinosPreferidos]
+
+   class Config:
+      orm_mode: True
 
 class NuevaHoraRequest(BaseModel):
    nuevaHora:NuevaHoraResponse
