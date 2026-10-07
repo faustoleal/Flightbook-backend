@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func, select, extract, union_all
 from models import  HorasDeVuelo
 from schemas.horas_de_vuelos import NuevaHoraRequest
+from models.aviones import Aviones
+from models.aerodromos import Aerodromos
 
 
 def get_all(db:Session):
@@ -93,49 +95,74 @@ def crear_hora(db:Session, request:NuevaHoraRequest):
 
 def horas_de_vuelos_stats(db:Session,id:int):
   #horas totales
-
   totales = (HorasDeVuelo.local_dia_p + HorasDeVuelo.local_dia_c + HorasDeVuelo.local_noche_p + HorasDeVuelo.local_noche_c + HorasDeVuelo.travesia_dia_p + HorasDeVuelo.travesia_dia_c + HorasDeVuelo.travesia_noche_p + HorasDeVuelo.local_noche_c)
 
   # horas por año
+  stmt_por_año = (
+      select(
+          extract("year", HorasDeVuelo.dia).label("año"),
+          func.sum(totales).label("horas")
+      )
+      .where(HorasDeVuelo.piloto_id == id)
+      .group_by(extract("year", HorasDeVuelo.dia))
+  )
+  horas_por_año = db.execute(stmt_por_año).all()
 
-  horas_por_año = (db.query(extract("year", HorasDeVuelo.dia).label("año"), func.sum(totales).label("horas"))).where(HorasDeVuelo.piloto_id == id).group_by(extract("year", HorasDeVuelo.dia)).all()
   # horas por avión
+  stmt_por_avion = (
+      select(
+          Aviones,
+          func.sum(totales).label("horas")
+      )
+      .join(HorasDeVuelo.avion)
+      .where(HorasDeVuelo.piloto_id == id)
+      .group_by(Aviones.matricula)
+  )
 
-  horas_por_avion = (db.query(HorasDeVuelo.avion_matricula, func.sum(totales).label("horas"))).where(HorasDeVuelo.piloto_id == id).group_by(HorasDeVuelo.avion_matricula).all()
+  horas_por_avion = db.execute(stmt_por_avion).all()
 
   # destinos preferidos
-  # Subquery para columna 'desde'
 
   desde_q = (
-        db.query(HorasDeVuelo.desde.label("destino"))
-        .filter(HorasDeVuelo.piloto_id == id)
+        select(HorasDeVuelo.desde.label("destino"))
+        .where(HorasDeVuelo.piloto_id == id)
     )
 
-  # Subquery para columna 'hasta'
   hasta_q = (
-        db.query(HorasDeVuelo.hasta.label("destino"))
-        .filter(HorasDeVuelo.piloto_id == id)
+        select(HorasDeVuelo.hasta.label("destino"))
+        .where(HorasDeVuelo.piloto_id == id)
     )
 
   # Unimos ambas columnas en una sola lista
-  union_q = union_all(desde_q, hasta_q).alias("aerodromos")
+  union_q = union_all(desde_q, hasta_q).alias("destino_union")
 
-  # Contamos ocurrencias de cada aeródromo
-  destinos_preferidos = (
-        db.query(
-            union_q.c.destino,
+  stmt_destinos = (
+        select(
+            Aerodromos,
             func.count().label("cantidad")
         )
-        .filter(union_q.c.destino != "ATE")  # si querés excluir ATE
-        .group_by(union_q.c.destino)
+        .select_from(union_q)
+        .join(Aerodromos, Aerodromos.aerodromo == union_q.c.destino)
+        .where(union_q.c.destino != "ATE")
+        .group_by(Aerodromos.aerodromo)
         .order_by(func.count().desc())
-        .all()
+        .limit(5)
     )
+
+  destinos_preferidos = db.execute(stmt_destinos).all()
 
   return {
         "horas_por_año": [{"año": int(a), "horas": float(h)} for a, h in horas_por_año],
-        "horas_por_avion": [{"avion": av, "horas": float(h)} for av, h in horas_por_avion],
-        "destinos_preferidos": [{"destino": d, "cantidad": c} for d, c in destinos_preferidos]
+        "horas_por_avion": [{"avion":{
+            "matricula": av.matricula,
+            "modelo": av.modelo,
+            "potencia": av.potencia,
+            "clase": av.clase
+        }, "horas": float(h)} for av, h in horas_por_avion],
+        "destinos_preferidos": [{"destino": {
+            "aerodromo": d.aerodromo,
+            "ciudad": d.ciudad
+        }, "cantidad": c} for d, c in destinos_preferidos]
     }
 
  
